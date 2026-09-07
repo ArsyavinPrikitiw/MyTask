@@ -1,5 +1,5 @@
 // ==========================================
-// 1. INISIALISASI DATA (TANPA DUMMY)
+// 1. INISIALISASI DATA
 // ==========================================
 let tasks = JSON.parse(localStorage.getItem('myTasks')) || [];
 
@@ -59,7 +59,7 @@ function switchView(targetSectionId) {
     Object.values(views).forEach(sec => sec.classList.remove('active'));
 
     const targetSection = document.getElementById(targetSectionId);
-    void targetSection.offsetWidth; // Trik reflow untuk animasi CSS
+    void targetSection.offsetWidth;
     targetSection.classList.add('active');
 
     navItems.forEach(item => {
@@ -92,6 +92,7 @@ function renderStatusBadge(status) {
 
 function renderDashboard() {
     const total = tasks.length;
+    // Menghitung status dengan teks "Belum Dikerjakan"
     const pending = tasks.filter(t => t.status === 'Belum Dikerjakan').length;
     const progress = tasks.filter(t => t.status === 'Sedang Dikerjakan').length;
     const completed = tasks.filter(t => t.status === 'Selesai').length;
@@ -108,17 +109,19 @@ function renderDashboard() {
     upcomingBody.innerHTML = '';
 
     if (sortedTasks.length === 0) {
-        upcomingBody.innerHTML = `<tr><td colspan="4" class="empty-cell">Mantap! Tidak ada tugas terdekat yang harus dikerjakan.</td></tr>`;
+        // Tambahkan data-label agar tidak error di CSS mobile
+        upcomingBody.innerHTML = `<tr><td colspan="4" class="empty-cell" data-label="Info">Mantap! Tidak ada tugas terdekat yang harus dikerjakan.</td></tr>`;
         return;
     }
 
     sortedTasks.slice(0, 5).forEach(task => {
         const row = document.createElement('tr');
+        // Penambahan atribut data-label di setiap <td> untuk tampilan Card di Mobile
         row.innerHTML = `
-      <td><strong>${escapeHtml(task.name)}</strong></td>
-      <td>${escapeHtml(task.subject)}</td>
-      <td>${task.deadline}</td>
-      <td>${renderStatusBadge(task.status)}</td>
+      <td data-label="Nama Tugas"><strong>${escapeHtml(task.name)}</strong></td>
+      <td data-label="Mata Pelajaran">${escapeHtml(task.subject)}</td>
+      <td data-label="Deadline">${task.deadline}</td>
+      <td data-label="Status">${renderStatusBadge(task.status)}</td>
     `;
         upcomingBody.appendChild(row);
     });
@@ -142,21 +145,22 @@ function renderTasksTable() {
     });
 
     if (filteredTasks.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="empty-cell">Belum ada data tugas. Silakan tambah tugas baru.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="empty-cell" data-label="Info">Belum ada data tugas. Silakan tambah tugas baru.</td></tr>`;
         return;
     }
 
     filteredTasks.forEach(task => {
         const row = document.createElement('tr');
+        // Penambahan atribut data-label di setiap <td> untuk tampilan Card di Mobile
         row.innerHTML = `
-      <td>
+      <td data-label="Nama Tugas">
         <strong>${escapeHtml(task.name)}</strong>
         ${task.description ? `<p style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">${escapeHtml(task.description)}</p>` : ''}
       </td>
-      <td>${escapeHtml(task.subject)}</td>
-      <td>${task.deadline}</td>
-      <td>${renderStatusBadge(task.status)}</td>
-      <td>
+      <td data-label="Mata Pelajaran">${escapeHtml(task.subject)}</td>
+      <td data-label="Deadline">${task.deadline}</td>
+      <td data-label="Status">${renderStatusBadge(task.status)}</td>
+      <td data-label="Aksi">
         <div class="table-actions">
           <button class="btn-icon" title="Ubah Status Cepat" onclick="toggleTaskStatus('${task.id}')">
             <i data-lucide="refresh-cw" style="width:14px; height:14px;"></i>
@@ -184,7 +188,7 @@ function resetForm() {
     taskNameInput.value = '';
     taskSubjectInput.value = '';
     taskDeadlineInput.value = '';
-    taskStatusInput.value = 'Belum Dikerjakan';
+    taskStatusInput.value = 'Belum Dikerjakan'; // Default value diubah
     taskDescInput.value = '';
     formHeading.innerText = 'Tambah Tugas Baru';
 }
@@ -215,6 +219,7 @@ window.deleteTask = function (id) {
 };
 
 window.toggleTaskStatus = function (id) {
+    // Update array urutan rotasi status
     const order = ['Belum Dikerjakan', 'Sedang Dikerjakan', 'Selesai'];
     tasks = tasks.map(task => {
         if (task.id === id) {
