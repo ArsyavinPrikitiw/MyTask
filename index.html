@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyTask — Kelola tugasmu, selesaikan tepat waktu.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <i data-lucide="check-square" class="brand-icon"></i>
+                <div class="brand-text">
+                    <span class="brand-title">MyTask</span>
+                    <span class="brand-subtitle">Student Task Manager</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-item active" data-target="dashboard-section">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-target="tasks-section">
+                    <i data-lucide="list-todo"></i>
+                    <span>Daftar Tugas</span>
+                </button>
+                <button class="nav-item" data-target="form-section" id="navAddTask">
+                    <i data-lucide="plus-circle"></i>
+                    <span>Tambah Tugas</span>
+                </button>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <button class="mobile-toggle" id="menuToggle" aria-label="Buka Menu">
+                    <i data-lucide="menu"></i>
+                </button>
+                <div class="page-meta">
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <p class="tagline">Kelola tugasmu, selesaikan tepat waktu.</p>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <section id="dashboard-section" class="view-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon icon-blue"><i data-lucide="layers"></i></div>
+                            <div>
+                                <p class="stat-label">Total Tugas</p>
+                                <h3 class="stat-value" id="statTotal">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon icon-red"><i data-lucide="clock"></i></div>
+                            <div>
+                                <p class="stat-label">Belum Dikerjakan</p>
+                                <h3 class="stat-value" id="statPending">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon icon-yellow"><i data-lucide="loader"></i></div>
+                            <div>
+                                <p class="stat-label">Sedang Dikerjakan</p>
+                                <h3 class="stat-value" id="statProgress">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon icon-green"><i data-lucide="check-circle-2"></i></div>
+                            <div>
+                                <p class="stat-label">Selesai</p>
+                                <h3 class="stat-value" id="statCompleted">0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2>Tugas Terdekat</h2>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Tugas</th>
+                                        <th>Mata Pelajaran</th>
+                                        <th>Deadline</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="upcomingTasksBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="tasks-section" class="view-section">
+                    <div class="action-bar">
+                        <div class="filter-controls">
+                            <input type="text" id="searchInput" placeholder="Cari nama atau mapel...">
+                            <select id="statusFilter">
+                                <option value="Semua">Semua Status</option>
+                                <option value="Belum Selesai">Belum Dikerjakan</option>
+                                <option value="Sedang Dikerjakan">Sedang Dikerjakan</option>
+                                <option value="Selesai">Selesai</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="btnOpenAddForm">
+                            <i data-lucide="plus"></i> Tambah Tugas
+                        </button>
+                    </div>
+
+                    <div class="panel">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Tugas</th>
+                                        <th>Mata Pelajaran</th>
+                                        <th>Deadline</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allTasksBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="form-section" class="view-section">
+                    <div class="panel form-panel">
+                        <div class="panel-header">
+                            <h2 id="formHeading">Tambah Tugas Baru</h2>
+                        </div>
+                        <form id="taskForm">
+                            <input type="hidden" id="taskId">
+
+                            <div class="form-group">
+                                <label for="taskName">Nama Tugas</label>
+                                <input type="text" id="taskName" required
+                                    placeholder="Contoh: Membuat Website Portofolio">
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="taskSubject">Mata Pelajaran</label>
+                                    <input type="text" id="taskSubject" required
+                                        placeholder="Contoh: PPLG / Pemrograman Web">
+                                </div>
+                                <div class="form-group">
+                                    <label for="taskDeadline">Deadline</label>
+                                    <input type="date" id="taskDeadline" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="taskStatus">Status</label>
+                                <select id="taskStatus">
+                                    <option value="Belum Selesai">Belum Dikerjakan</option>
+                                    <option value="Sedang Dikerjakan">Sedang Dikerjakan</option>
+                                    <option value="Selesai">Selesai</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="taskDescription">Deskripsi Tugas (Opsional)</label>
+                                <textarea id="taskDescription" rows="4"
+                                    placeholder="Detail instruksi atau catatan tugas..."></textarea>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Simpan Tugas</button>
+                                <button type="button" class="btn btn-secondary" id="btnCancelForm">Batal</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
