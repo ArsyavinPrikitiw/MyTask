@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -15,8 +16,10 @@
 <body>
 
     <div class="app-container">
+        <!-- Overlay Mobile Nav -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+        <!-- Sidebar Navigasi -->
         <aside class="sidebar" id="sidebar">
             <div class="brand">
                 <i data-lucide="check-square" class="brand-icon"></i>
@@ -42,6 +45,7 @@
             </nav>
         </aside>
 
+        <!-- Konten Utama -->
         <main class="main-content">
             <header class="topbar">
                 <button class="mobile-toggle" id="menuToggle" aria-label="Buka Menu">
@@ -54,7 +58,9 @@
             </header>
 
             <div class="content-area">
+                <!-- 1. SECTION: DASHBOARD -->
                 <section id="dashboard-section" class="view-section active">
+                    <!-- Stat Cards -->
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-icon icon-blue"><i data-lucide="layers"></i></div>
@@ -66,7 +72,7 @@
                         <div class="stat-card">
                             <div class="stat-icon icon-red"><i data-lucide="clock"></i></div>
                             <div>
-                                <p class="stat-label">Belum Dikerjakan</p>
+                                <p class="stat-label">Belum Dikerjakan/p>
                                 <h3 class="stat-value" id="statPending">0</h3>
                             </div>
                         </div>
@@ -86,6 +92,7 @@
                         </div>
                     </div>
 
+                    <!-- Tugas Terdekat -->
                     <div class="panel">
                         <div class="panel-header">
                             <h2>Tugas Terdekat</h2>
@@ -101,12 +108,14 @@
                                     </tr>
                                 </thead>
                                 <tbody id="upcomingTasksBody">
+                                    <!-- Rendered by JS -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </section>
 
+                <!-- 2. SECTION: DAFTAR TUGAS -->
                 <section id="tasks-section" class="view-section">
                     <div class="action-bar">
                         <div class="filter-controls">
@@ -136,12 +145,14 @@
                                     </tr>
                                 </thead>
                                 <tbody id="allTasksBody">
+                                    <!-- Rendered by JS -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </section>
 
+                <!-- 3 & 4. SECTION: FORM (TAMBAH / EDIT TUGAS) -->
                 <section id="form-section" class="view-section">
                     <div class="panel form-panel">
                         <div class="panel-header">

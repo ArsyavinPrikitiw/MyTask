@@ -37,6 +37,29 @@ body {
     min-height: 100vh;
 }
 
+/* --- ANIMASI & KEYFRAMES --- */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInSimple {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
 /* Sidebar */
 .sidebar {
     width: 240px;
@@ -156,6 +179,7 @@ body {
 
 .view-section.active {
     display: block;
+    animation: fadeInUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Stats Cards */
@@ -175,6 +199,13 @@ body {
     align-items: center;
     gap: 16px;
     box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+    border-color: #cbd5e1;
 }
 
 .stat-icon {
@@ -263,6 +294,15 @@ body {
     border-bottom: none;
 }
 
+.data-table tbody tr {
+    animation: fadeInSimple 0.2s ease forwards;
+    transition: background-color 0.15s ease;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f1f5f9;
+}
+
 /* Badges */
 .badge {
     display: inline-block;
@@ -270,6 +310,7 @@ body {
     font-size: 0.75rem;
     font-weight: 600;
     border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .badge-pending {
@@ -333,6 +374,11 @@ textarea:focus {
     border-radius: var(--radius);
     border: 1px solid transparent;
     cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn:active {
+    transform: scale(0.98);
 }
 
 .btn-primary {
@@ -366,11 +412,17 @@ textarea:focus {
     border-radius: 4px;
     cursor: pointer;
     color: var(--text-muted);
+    transition: all 0.15s ease;
 }
 
 .btn-icon:hover {
     background-color: var(--bg-secondary);
     color: var(--text-main);
+    transform: translateY(-1px);
+}
+
+.btn-icon:active {
+    transform: scale(0.92);
 }
 
 .btn-icon.delete:hover {
@@ -468,115 +520,4 @@ textarea:focus {
     .filter-controls {
         flex-direction: column;
     }
-}
-
-/* --- ANIMASI & KEYFRAMES --- */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInSimple {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-/* Transisi Halus pada Pergantian Section */
-.view-section {
-    display: none;
-}
-
-.view-section.active {
-    display: block;
-    animation: fadeInUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Animasi Halus untuk Stat Card */
-.stat-card {
-    background: var(--bg-main);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    box-shadow: var(--shadow);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-/* Sedikit efek angkat saat kartu di-hover */
-.stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
-    border-color: #cbd5e1;
-}
-
-/* Animasi Fade-in pada Setiap Baris Tabel */
-.data-table tbody tr {
-    animation: fadeInSimple 0.2s ease forwards;
-    transition: background-color 0.15s ease;
-}
-
-.data-table tbody tr:hover {
-    background-color: #f1f5f9;
-}
-
-/* Feedback Mikro pada Tombol & Input */
-.btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    padding: 8px 14px;
-    border-radius: var(--radius);
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.btn:active {
-    transform: scale(0.98);
-}
-
-.btn-icon {
-    background: none;
-    border: 1px solid var(--border);
-    padding: 5px;
-    border-radius: 4px;
-    cursor: pointer;
-    color: var(--text-muted);
-    transition: all 0.15s ease;
-}
-
-.btn-icon:hover {
-    background-color: var(--bg-secondary);
-    color: var(--text-main);
-    transform: translateY(-1px);
-}
-
-.btn-icon:active {
-    transform: scale(0.92);
-}
-
-/* Animasi badge status ketika berubah */
-.badge {
-    display: inline-block;
-    padding: 3px 8px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border-radius: 4px;
-    transition: background-color 0.2s ease, color 0.2s ease;
 }

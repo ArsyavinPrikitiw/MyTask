@@ -1,6 +1,11 @@
-// State & Elemen DOM
-let tasks = JSON.parse(localStorage.getItem('myTasks')) || DEFAULT_TASKS;
+// ==========================================
+// 1. INISIALISASI DATA (TANPA DUMMY)
+// ==========================================
+let tasks = JSON.parse(localStorage.getItem('myTasks')) || [];
 
+// ==========================================
+// 2. ELEMEN DOM
+// ==========================================
 const views = {
     dashboard: document.getElementById('dashboard-section'),
     tasks: document.getElementById('tasks-section'),
@@ -25,30 +30,42 @@ const taskDescInput = document.getElementById('taskDescription');
 const searchInput = document.getElementById('searchInput');
 const statusFilter = document.getElementById('statusFilter');
 
-// Simpan data ke LocalStorage
+// ==========================================
+// 3. FUNGSI UTILITAS & PENGAMAN
+// ==========================================
+function renderIcons() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    } else {
+        console.warn("Lucide Icons CDN belum dimuat, namun website tetap berfungsi.");
+    }
+}
+
 function saveTasks() {
     localStorage.setItem('myTasks', JSON.stringify(tasks));
 }
 
-// Navigasi Tampilan
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.innerText = text;
+    return div.innerHTML;
+}
+
+// ==========================================
+// 4. NAVIGASI
+// ==========================================
 function switchView(targetSectionId) {
-    // Sembunyikan semua section
-    Object.values(views).forEach(sec => {
-        sec.classList.remove('active');
-    });
+    Object.values(views).forEach(sec => sec.classList.remove('active'));
 
     const targetSection = document.getElementById(targetSectionId);
-
-    // Trigger reflow kecil agar keyframe animasi berjalan ulang setiap tab dibuka
-    void targetSection.offsetWidth;
+    void targetSection.offsetWidth; // Trik reflow untuk animasi CSS
     targetSection.classList.add('active');
 
-    // Update status active pada menu sidebar
     navItems.forEach(item => {
         item.classList.toggle('active', item.getAttribute('data-target') === targetSectionId);
     });
 
-    // Logika update judul & pemanggilan fungsi render
     if (targetSectionId === 'dashboard-section') {
         pageTitle.innerText = 'Dashboard';
         renderDashboard();
@@ -59,12 +76,13 @@ function switchView(targetSectionId) {
         pageTitle.innerText = taskIdInput.value ? 'Edit Tugas' : 'Tambah Tugas';
     }
 
-    // Tutup sidebar di tampilan mobile jika terbuka
     sidebar.classList.remove('open');
     sidebarOverlay.classList.remove('active');
 }
 
-// Format badge status
+// ==========================================
+// 5. RENDER DASHBOARD
+// ==========================================
 function renderStatusBadge(status) {
     let badgeClass = 'badge-pending';
     if (status === 'Sedang Dikerjakan') badgeClass = 'badge-progress';
@@ -72,7 +90,6 @@ function renderStatusBadge(status) {
     return `<span class="badge ${badgeClass}">${status}</span>`;
 }
 
-// Render Dashboard
 function renderDashboard() {
     const total = tasks.length;
     const pending = tasks.filter(t => t.status === 'Belum Dikerjakan').length;
@@ -84,13 +101,14 @@ function renderDashboard() {
     document.getElementById('statProgress').innerText = progress;
     document.getElementById('statCompleted').innerText = completed;
 
-    // Urutkan deadline terdekat
-    const sortedTasks = [...tasks].sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+    const activeTasks = tasks.filter(t => t.status !== 'Selesai');
+    const sortedTasks = [...activeTasks].sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+
     const upcomingBody = document.getElementById('upcomingTasksBody');
     upcomingBody.innerHTML = '';
 
     if (sortedTasks.length === 0) {
-        upcomingBody.innerHTML = `<tr><td colspan="4" class="empty-cell">Belum ada tugas tercatat.</td></tr>`;
+        upcomingBody.innerHTML = `<tr><td colspan="4" class="empty-cell">Mantap! Tidak ada tugas terdekat yang harus dikerjakan.</td></tr>`;
         return;
     }
 
@@ -106,7 +124,9 @@ function renderDashboard() {
     });
 }
 
-// Render Tabel Daftar Tugas
+// ==========================================
+// 6. RENDER TABEL TUGAS
+// ==========================================
 function renderTasksTable() {
     const tbody = document.getElementById('allTasksBody');
     tbody.innerHTML = '';
@@ -122,7 +142,7 @@ function renderTasksTable() {
     });
 
     if (filteredTasks.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="empty-cell">Tidak ada tugas yang sesuai.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="empty-cell">Belum ada data tugas. Silakan tambah tugas baru.</td></tr>`;
         return;
     }
 
@@ -153,23 +173,18 @@ function renderTasksTable() {
         tbody.appendChild(row);
     });
 
-    lucide.createIcons();
+    renderIcons();
 }
 
-// Utilitas Sanitasi Teks
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.innerText = text;
-    return div.innerHTML;
-}
-
-// Form Handlers
+// ==========================================
+// 7. HANDLER FORM & AKSI
+// ==========================================
 function resetForm() {
     taskIdInput.value = '';
     taskNameInput.value = '';
     taskSubjectInput.value = '';
     taskDeadlineInput.value = '';
-    taskStatusInput.value = 'Belum Selesai';
+    taskStatusInput.value = 'Belum Dikerjakan';
     taskDescInput.value = '';
     formHeading.innerText = 'Tambah Tugas Baru';
 }
@@ -185,20 +200,21 @@ function openEditForm(id) {
     taskStatusInput.value = task.status;
     taskDescInput.value = task.description || '';
 
-    formHeading.innerText = 'Edit Tugas';
     switchView('form-section');
 }
 
-function deleteTask(id) {
+window.openEditForm = openEditForm;
+
+window.deleteTask = function (id) {
     if (confirm('Apakah kamu yakin ingin menghapus tugas ini?')) {
         tasks = tasks.filter(t => t.id !== id);
         saveTasks();
         renderTasksTable();
         renderDashboard();
     }
-}
+};
 
-function toggleTaskStatus(id) {
+window.toggleTaskStatus = function (id) {
     const order = ['Belum Dikerjakan', 'Sedang Dikerjakan', 'Selesai'];
     tasks = tasks.map(task => {
         if (task.id === id) {
@@ -210,9 +226,8 @@ function toggleTaskStatus(id) {
     saveTasks();
     renderTasksTable();
     renderDashboard();
-}
+};
 
-// Submit Form (Tambah / Update)
 taskForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -237,7 +252,9 @@ taskForm.addEventListener('submit', (e) => {
     switchView('tasks-section');
 });
 
-// Event Listeners Navigasi
+// ==========================================
+// 8. EVENT LISTENERS
+// ==========================================
 navItems.forEach(item => {
     item.addEventListener('click', () => {
         const target = item.getAttribute('data-target');
@@ -256,11 +273,9 @@ document.getElementById('btnCancelForm').addEventListener('click', () => {
     switchView('tasks-section');
 });
 
-// Filter & Search Real-time
 searchInput.addEventListener('input', renderTasksTable);
 statusFilter.addEventListener('change', renderTasksTable);
 
-// Mobile Nav Toggle
 menuToggle.addEventListener('click', () => {
     sidebar.classList.toggle('open');
     sidebarOverlay.classList.toggle('active');
@@ -271,7 +286,11 @@ sidebarOverlay.addEventListener('click', () => {
     sidebarOverlay.classList.remove('active');
 });
 
-// Render Awal
-saveTasks();
-renderDashboard();
-lucide.createIcons();
+// ==========================================
+// 9. EKSEKUSI SAAT PERTAMA KALI WEB DIBUKA
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    renderDashboard();
+    renderTasksTable();
+    renderIcons();
+});
